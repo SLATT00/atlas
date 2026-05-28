@@ -1,0 +1,100 @@
+{
+  "nav": {
+    "home": "Главная",
+    "accounts": "Счета",
+    "cards": "Карты",
+    "transfers": "Переводы",
+    "products": "Продукты",
+    "profile": "Профиль"
+  },
+  "home": {
+    "totalWealth": "Общий капитал",
+    "change": "за месяц",
+    "quickActions": "Быстрые действия",
+    "deposit": "Пополнить",
+    "transfer": "Перевести",
+    "exchange": "Обменять",
+    "card": "Карта",
+    "loan": "Займ",
+    "details": "Реквизиты",
+    "recentActivity": "Последние операции",
+    "assets": "Активы",
+    "fiat": "Фиат",
+    "crypto": "Крипто",
+    "savings": "Накопления",
+    "investments": "Инвестиции"
+  },
+  "accounts": {
+    "title": "Счета",
+    "available": "Доступно",
+    "current": "Текущий баланс",
+    "openAccount": "Открыть счёт",
+    "transactions": "Операции",
+    "statement": "Выписка",
+    "details": "Реквизиты"
+  },
+  "cards": {
+    "title": "Карты",
+    "orderCard": "Заказать карту",
+    "freeze": "Заморозить",
+    "unfreeze": "Разморозить",
+    "limits": "Лимиты",
+    "controls": "Управление",
+    "showDetails": "Показать данные",
+    "spending": "Расходы",
+    "daily": "Дневной лимит",
+    "monthly": "Месячный лимит"
+  },
+  "transfers": {
+    "title": "Переводы",
+    "newTransfer": "Новый перевод",
+    "internal": "Внутренний",
+    "domestic": "По стране",
+    "international": "Международный",
+    "card": "На карту",
+    "crypto": "Крипто",
+    "recipient": "Получатель",
+    "amount": "Сумма",
+    "fee": "Комиссия",
+    "total": "Итого",
+    "send": "Отправить",
+    "estimate": "Рассчитать",
+    "history": "История"
+  },
+  "products": {
+    "title": "Продукты",
+    "savings": "Накопления",
+    "loans": "Займы",
+    "creditLine": "Кредитная линия",
+    "apy": "Годовая ставка",
+    "balance": "Баланс",
+    "openSavings": "Открыть вклад",
+    "applyLoan": "Оформить займ",
+    "collateral": "Залог",
+    "ltv": "LTV",
+    "rate": "Ставка"
+  },
+  "profile": {
+    "title": "Профиль",
+    "personalInfo": "Личные данные",
+    "security": "Безопасность",
+    "verification": "Верификация",
+    "settings": "Настройки",
+    "language": "Язык",
+    "support": "Поддержка",
+    "logout": "Выйти"
+  },
+  "common": {
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Успешно",
+    "cancel": "Отмена",
+    "confirm": "Подтвердить",
+    "save": "Сохранить",
+    "back": "Назад",
+    "next": "Далее",
+    "close": "Закрыть",
+    "search": "Поиск",
+    "noData": "Нет данных"
+  }
+}

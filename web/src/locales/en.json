@@ -1,0 +1,100 @@
+{
+  "nav": {
+    "home": "Home",
+    "accounts": "Accounts",
+    "cards": "Cards",
+    "transfers": "Transfers",
+    "products": "Products",
+    "profile": "Profile"
+  },
+  "home": {
+    "totalWealth": "Total Wealth",
+    "change": "this month",
+    "quickActions": "Quick Actions",
+    "deposit": "Deposit",
+    "transfer": "Transfer",
+    "exchange": "Exchange",
+    "card": "Card",
+    "loan": "Loan",
+    "details": "Details",
+    "recentActivity": "Recent Activity",
+    "assets": "Assets",
+    "fiat": "Fiat",
+    "crypto": "Crypto",
+    "savings": "Savings",
+    "investments": "Investments"
+  },
+  "accounts": {
+    "title": "Accounts",
+    "available": "Available",
+    "current": "Current Balance",
+    "openAccount": "Open Account",
+    "transactions": "Transactions",
+    "statement": "Statement",
+    "details": "Details"
+  },
+  "cards": {
+    "title": "Cards",
+    "orderCard": "Order Card",
+    "freeze": "Freeze",
+    "unfreeze": "Unfreeze",
+    "limits": "Limits",
+    "controls": "Controls",
+    "showDetails": "Show Details",
+    "spending": "Spending",
+    "daily": "Daily Limit",
+    "monthly": "Monthly Limit"
+  },
+  "transfers": {
+    "title": "Transfers",
+    "newTransfer": "New Transfer",
+    "internal": "Internal",
+    "domestic": "Domestic",
+    "international": "International",
+    "card": "Card",
+    "crypto": "Crypto",
+    "recipient": "Recipient",
+    "amount": "Amount",
+    "fee": "Fee",
+    "total": "Total",
+    "send": "Send",
+    "estimate": "Estimate",
+    "history": "History"
+  },
+  "products": {
+    "title": "Products",
+    "savings": "Savings",
+    "loans": "Loans",
+    "creditLine": "Credit Line",
+    "apy": "APY",
+    "balance": "Balance",
+    "openSavings": "Open Savings",
+    "applyLoan": "Apply for Loan",
+    "collateral": "Collateral",
+    "ltv": "LTV",
+    "rate": "Rate"
+  },
+  "profile": {
+    "title": "Profile",
+    "personalInfo": "Personal Info",
+    "security": "Security",
+    "verification": "Verification",
+    "settings": "Settings",
+    "language": "Language",
+    "support": "Support",
+    "logout": "Log Out"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "back": "Back",
+    "next": "Next",
+    "close": "Close",
+    "search": "Search",
+    "noData": "No data"
+  }
+}
