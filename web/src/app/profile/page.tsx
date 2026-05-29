@@ -1,10 +1,13 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
 import { Card } from '@/components/ui/Card';
 import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
+import { useAuthStore } from '@/store/auth';
+import { useDataStore } from '@/store/data';
 import {
   User,
   Shield,
@@ -27,18 +30,30 @@ const menuItems = [
   { icon: Fingerprint, label: 'Биометрия', href: '/profile/biometrics', badge: null },
   { icon: Smartphone, label: 'Устройства', href: '/profile/devices', badge: '3' },
   { icon: Settings, label: 'Настройки', href: '/profile/settings', badge: null },
-  { icon: Globe, label: 'Язык', href: '/profile/language', badge: 'Русский' },
+  { icon: Globe, label: 'Язык', href: '/profile/language', badge: null },
   { icon: HelpCircle, label: 'Поддержка', href: '/profile/support', badge: null },
 ];
 
 export default function ProfilePage() {
+  const router = useRouter();
+  const { user, logout } = useAuthStore();
+  const notifications = useDataStore((s) => s.notifications);
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
+
+  const displayName = user?.name || 'Михаил Иванов';
+
   return (
     <AppShell>
       {/* User Header */}
       <section className="flex items-center gap-4 mb-6">
-        <Avatar name="Михаил Иванов" size="lg" />
+        <Avatar name={displayName} size="lg" />
         <div>
-          <h1 className="text-section text-atlas-text">Михаил Иванов</h1>
+          <h1 className="text-section text-atlas-text">{displayName}</h1>
           <p className="text-secondary text-atlas-text-secondary">Premium</p>
         </div>
       </section>
@@ -65,6 +80,7 @@ export default function ProfilePage() {
       <div className="space-y-1">
         {menuItems.map((item) => {
           const Icon = item.icon;
+          const isNotif = item.icon === Bell;
           return (
             <Link
               key={item.label}
@@ -76,6 +92,11 @@ export default function ProfilePage() {
                 <span className="text-body text-atlas-text">{item.label}</span>
               </div>
               <div className="flex items-center gap-2">
+                {isNotif && unreadCount > 0 && (
+                  <span className="min-w-[20px] h-[20px] flex items-center justify-center rounded-full bg-atlas-error text-white text-[11px] font-semibold px-1">
+                    {unreadCount}
+                  </span>
+                )}
                 {item.badge && (
                   <span className="text-label text-atlas-muted">{item.badge}</span>
                 )}
@@ -86,7 +107,10 @@ export default function ProfilePage() {
         })}
 
         {/* Logout */}
-        <button className="w-full flex items-center gap-3 py-3.5 px-3 rounded-xl hover:bg-atlas-error/5 transition-colors mt-4">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 py-3.5 px-3 rounded-xl hover:bg-atlas-error/5 transition-colors mt-4"
+        >
           <LogOut size={20} className="text-atlas-error" />
           <span className="text-body text-atlas-error">Выйти</span>
         </button>

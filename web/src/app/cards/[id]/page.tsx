@@ -7,6 +7,8 @@ import { AppShell } from '@/components/layout/AppShell';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { useToast } from '@/components/ui/Toast';
+import { useDataStore } from '@/store/data';
 import { formatCurrency } from '@/lib/format';
 import {
   ChevronLeft,
@@ -19,24 +21,8 @@ import {
   Banknote,
   CreditCard,
   Settings,
+  Play,
 } from 'lucide-react';
-
-const mockCard = {
-  id: '1',
-  type: 'metal',
-  typeName: 'Atlas Metal',
-  last4: '4829',
-  network: 'Visa',
-  status: 'active' as const,
-  currency: 'RUB',
-  spent: 145000,
-  dailyLimit: 500000,
-  monthlyLimit: 5000000,
-  transactionLimit: 200000,
-  expiryMonth: 12,
-  expiryYear: 2028,
-  holder: 'MIKHAIL IVANOV',
-};
 
 interface ToggleProps {
   label: string;
@@ -71,17 +57,53 @@ function ControlToggle({ label, icon: Icon, enabled, onToggle }: ToggleProps) {
 
 export default function CardDetailPage() {
   const { id } = useParams();
-  const [showDetails, setShowDetails] = useState(false);
-  const [controls, setControls] = useState({
-    online: true,
-    contactless: true,
-    atm: true,
-    international: true,
-    subscriptions: true,
-  });
+  const cardId = typeof id === 'string' ? id : id?.[0] ?? '';
+  const { toast } = useToast();
 
-  const toggleControl = (key: keyof typeof controls) => {
-    setControls((prev) => ({ ...prev, [key]: !prev[key] }));
+  const cards = useDataStore((s) => s.cards);
+  const freezeCard = useDataStore((s) => s.freezeCard);
+  const unfreezeCard = useDataStore((s) => s.unfreezeCard);
+  const updateCardControls = useDataStore((s) => s.updateCardControls);
+
+  const card = cards.find((c) => c.id === cardId);
+
+  const [showDetails, setShowDetails] = useState(false);
+
+  if (!card) {
+    return (
+      <AppShell>
+        <div className="flex items-center gap-3 mb-6">
+          <Link href="/cards" className="p-2 -ml-2 rounded-xl hover:bg-white/5 transition-colors">
+            <ChevronLeft size={20} className="text-atlas-text-secondary" />
+          </Link>
+          <h1 className="text-section text-atlas-text">Карта не найдена</h1>
+        </div>
+        <Card>
+          <p className="text-secondary text-atlas-text-secondary text-center py-8">
+            Карта с указанным идентификатором не существует.
+          </p>
+          <Link href="/cards">
+            <Button variant="secondary" className="w-full mt-2">Вернуться к картам</Button>
+          </Link>
+        </Card>
+      </AppShell>
+    );
+  }
+
+  const isFrozen = card.status === 'frozen';
+
+  const handleFreezeToggle = () => {
+    if (isFrozen) {
+      unfreezeCard(cardId);
+      toast('success', 'Карта разморожена');
+    } else {
+      freezeCard(cardId);
+      toast('info', 'Карта заморожена');
+    }
+  };
+
+  const handleControlToggle = (key: keyof typeof card.controls) => {
+    updateCardControls(cardId, { [key]: !card.controls[key] });
   };
 
   return (
@@ -92,10 +114,12 @@ export default function CardDetailPage() {
           <ChevronLeft size={20} className="text-atlas-text-secondary" />
         </Link>
         <div className="flex-1">
-          <h1 className="text-section text-atlas-text">{mockCard.typeName}</h1>
-          <p className="text-label text-atlas-muted">{mockCard.network} •••• {mockCard.last4}</p>
+          <h1 className="text-section text-atlas-text">{card.typeName}</h1>
+          <p className="text-label text-atlas-muted">{card.network} •••• {card.last4}</p>
         </div>
-        <Badge variant="success">Активна</Badge>
+        <Badge variant={isFrozen ? 'warning' : 'success'}>
+          {isFrozen ? 'Заморожена' : 'Активна'}
+        </Badge>
       </div>
 
       {/* Card Visual */}
@@ -103,21 +127,21 @@ export default function CardDetailPage() {
         <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
         <div className="relative">
           <div className="flex items-center justify-between mb-10">
-            <span className="text-secondary text-atlas-text font-semibold">{mockCard.typeName}</span>
+            <span className="text-secondary text-atlas-text font-semibold">{card.typeName}</span>
             <CreditCard size={24} className="text-atlas-text-secondary" />
           </div>
           <p className="text-section text-atlas-text tracking-[0.2em] mb-4 font-mono">
-            {showDetails ? '4276 8901 2345 ' + mockCard.last4 : '•••• •••• •••• ' + mockCard.last4}
+            {showDetails ? '4276 8901 2345 ' + card.last4 : '•••• •••• •••• ' + card.last4}
           </p>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-label text-atlas-muted">Держатель</p>
-              <p className="text-secondary text-atlas-text">{mockCard.holder}</p>
+              <p className="text-secondary text-atlas-text">{card.holder}</p>
             </div>
             <div className="text-right">
               <p className="text-label text-atlas-muted">Срок</p>
               <p className="text-secondary text-atlas-text">
-                {String(mockCard.expiryMonth).padStart(2, '0')}/{mockCard.expiryYear}
+                {String(card.expiryMonth).padStart(2, '0')}/{card.expiryYear}
               </p>
             </div>
             {showDetails && (
@@ -136,8 +160,12 @@ export default function CardDetailPage() {
           {showDetails ? <EyeOff size={14} className="mr-1.5" /> : <Eye size={14} className="mr-1.5" />}
           {showDetails ? 'Скрыть' : 'Показать'}
         </Button>
-        <Button size="sm" variant="secondary" className="flex-1">
-          <Snowflake size={14} className="mr-1.5" /> Заморозить
+        <Button size="sm" variant="secondary" className="flex-1" onClick={handleFreezeToggle}>
+          {isFrozen ? (
+            <><Play size={14} className="mr-1.5" /> Разморозить</>
+          ) : (
+            <><Snowflake size={14} className="mr-1.5" /> Заморозить</>
+          )}
         </Button>
         <Button size="sm" variant="secondary" className="flex-1">
           <Settings size={14} className="mr-1.5" /> PIN
@@ -149,16 +177,16 @@ export default function CardDetailPage() {
         <h3 className="text-card-title text-atlas-text mb-3">Расходы за месяц</h3>
         <div className="flex items-end justify-between mb-2">
           <span className="text-section text-atlas-text font-bold">
-            {formatCurrency(mockCard.spent, mockCard.currency)}
+            {formatCurrency(card.spent, card.currency)}
           </span>
           <span className="text-label text-atlas-muted">
-            из {formatCurrency(mockCard.monthlyLimit, mockCard.currency)}
+            из {formatCurrency(card.monthlyLimit, card.currency)}
           </span>
         </div>
         <div className="h-2 bg-atlas-bg rounded-full overflow-hidden">
           <div
             className="h-full bg-atlas-accent rounded-full transition-all"
-            style={{ width: `${(mockCard.spent / mockCard.monthlyLimit) * 100}%` }}
+            style={{ width: `${(card.spent / card.monthlyLimit) * 100}%` }}
           />
         </div>
       </Card>
@@ -168,14 +196,14 @@ export default function CardDetailPage() {
         <h3 className="text-card-title text-atlas-text mb-3">Лимиты</h3>
         <div className="space-y-3">
           {[
-            { label: 'На операцию', value: mockCard.transactionLimit },
-            { label: 'Дневной', value: mockCard.dailyLimit },
-            { label: 'Месячный', value: mockCard.monthlyLimit },
+            { label: 'На операцию', value: card.transactionLimit },
+            { label: 'Дневной', value: card.dailyLimit },
+            { label: 'Месячный', value: card.monthlyLimit },
           ].map((limit) => (
             <div key={limit.label} className="flex items-center justify-between">
               <span className="text-secondary text-atlas-text-secondary">{limit.label}</span>
               <span className="text-secondary text-atlas-text font-medium">
-                {formatCurrency(limit.value, mockCard.currency)}
+                {formatCurrency(limit.value, card.currency)}
               </span>
             </div>
           ))}
@@ -189,11 +217,11 @@ export default function CardDetailPage() {
       <Card>
         <h3 className="text-card-title text-atlas-text mb-1">Управление</h3>
         <div className="divide-y divide-white/5">
-          <ControlToggle label="Онлайн-платежи" icon={Globe} enabled={controls.online} onToggle={() => toggleControl('online')} />
-          <ControlToggle label="Бесконтактная оплата" icon={Wifi} enabled={controls.contactless} onToggle={() => toggleControl('contactless')} />
-          <ControlToggle label="Снятие наличных" icon={Banknote} enabled={controls.atm} onToggle={() => toggleControl('atm')} />
-          <ControlToggle label="Международные платежи" icon={Globe} enabled={controls.international} onToggle={() => toggleControl('international')} />
-          <ControlToggle label="Подписки" icon={ShoppingBag} enabled={controls.subscriptions} onToggle={() => toggleControl('subscriptions')} />
+          <ControlToggle label="Онлайн-платежи" icon={Globe} enabled={card.controls.online} onToggle={() => handleControlToggle('online')} />
+          <ControlToggle label="Бесконтактная оплата" icon={Wifi} enabled={card.controls.contactless} onToggle={() => handleControlToggle('contactless')} />
+          <ControlToggle label="Снятие наличных" icon={Banknote} enabled={card.controls.atm} onToggle={() => handleControlToggle('atm')} />
+          <ControlToggle label="Международные платежи" icon={Globe} enabled={card.controls.international} onToggle={() => handleControlToggle('international')} />
+          <ControlToggle label="Подписки" icon={ShoppingBag} enabled={card.controls.subscriptions} onToggle={() => handleControlToggle('subscriptions')} />
         </div>
       </Card>
     </AppShell>

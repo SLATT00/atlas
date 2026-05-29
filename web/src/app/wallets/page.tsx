@@ -1,33 +1,21 @@
 'use client';
 
+import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
 import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { formatCurrency } from '@/lib/format';
+import { useDataStore } from '@/store/data';
 import { Plus, ChevronRight, TrendingUp, TrendingDown } from 'lucide-react';
-import Link from 'next/link';
-
-const mockWallets = [
-  { id: '1', asset: 'BTC', name: 'Bitcoin', network: 'bitcoin', balance: 0.4521, valueRub: 4_200_000, change24h: 2.4 },
-  { id: '2', asset: 'ETH', name: 'Ethereum', network: 'ethereum', balance: 3.2, valueRub: 960_000, change24h: -1.2 },
-  { id: '3', asset: 'TON', name: 'Toncoin', network: 'ton', balance: 1500, valueRub: 450_000, change24h: 5.1 },
-  { id: '4', asset: 'SOL', name: 'Solana', network: 'solana', balance: 25, valueRub: 375_000, change24h: 3.8 },
-  { id: '5', asset: 'USDT', name: 'Tether', network: 'ethereum', balance: 5000, valueRub: 460_000, change24h: 0.01 },
-  { id: '6', asset: 'USDC', name: 'USD Coin', network: 'ethereum', balance: 3000, valueRub: 276_000, change24h: -0.02 },
-];
 
 const assetIcons: Record<string, string> = {
-  BTC: '₿',
-  ETH: 'Ξ',
-  TON: '◎',
-  SOL: '◎',
-  USDT: '₮',
-  USDC: '$',
+  BTC: '₿', ETH: 'Ξ', TON: '◎', SOL: '◎', USDT: '₮', USDC: '$',
 };
 
 export default function WalletsPage() {
-  const totalValue = mockWallets.reduce((sum, w) => sum + w.valueRub, 0);
+  const wallets = useDataStore((s) => s.wallets);
+
+  const PRICES: Record<string, number> = { BTC: 9_200_000, ETH: 340_000, TON: 550, SOL: 15_000, USDT: 92, USDC: 92 };
+  const totalValue = wallets.reduce((sum, w) => sum + w.balance * (PRICES[w.asset] || 0), 0);
 
   return (
     <AppShell>
@@ -35,7 +23,7 @@ export default function WalletsPage() {
         <div>
           <h1 className="text-header text-atlas-text">Кошельки</h1>
           <p className="text-secondary text-atlas-text-secondary mt-0.5">
-            {formatCurrency(totalValue, 'RUB')}
+            ≈ ₽{totalValue.toLocaleString('ru-RU')}
           </p>
         </div>
         <Button size="sm" variant="secondary">
@@ -45,13 +33,13 @@ export default function WalletsPage() {
       </div>
 
       <div className="space-y-3">
-        {mockWallets.map((wallet) => (
+        {wallets.map((wallet) => (
           <Link key={wallet.id} href={`/wallets/${wallet.id}`}>
             <Card hoverable className="mb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-atlas-elevated flex items-center justify-center text-lg font-bold text-atlas-accent">
-                    {assetIcons[wallet.asset]}
+                    {assetIcons[wallet.asset] || wallet.asset[0]}
                   </div>
                   <div>
                     <div className="flex items-center gap-2">

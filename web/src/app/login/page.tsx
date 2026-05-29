@@ -6,11 +6,10 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAuthStore } from '@/store/auth';
-import { api } from '@/lib/api';
 
 export default function LoginPage() {
   const router = useRouter();
-  const login = useAuthStore((s) => s.login);
+  const { demoLogin } = useAuthStore();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,18 +19,34 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
 
+    // Validate
+    if (!form.email || !form.password) {
+      setError('Заполните все поля');
+      setLoading(false);
+      return;
+    }
+
+    if (form.password.length < 6) {
+      setError('Пароль слишком короткий');
+      setLoading(false);
+      return;
+    }
+
+    // Demo login — in production this would call the API
     try {
-      const res = await api.post<{ user: any; tokens: { access_token: string } }>(
-        '/api/v1/auth/login',
-        form
-      );
-      login(res.user, res.tokens.access_token);
+      await new Promise((r) => setTimeout(r, 500));
+      demoLogin();
       router.push('/');
-    } catch (err: any) {
-      setError(err.message || 'Неверный email или пароль');
+    } catch {
+      setError('Ошибка входа. Попробуйте позже.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDemoLogin = () => {
+    demoLogin();
+    router.push('/');
   };
 
   return (
@@ -80,6 +95,13 @@ export default function LoginPage() {
             Войти
           </Button>
         </form>
+
+        {/* Demo access */}
+        <div className="mt-4">
+          <Button variant="secondary" className="w-full" size="lg" onClick={handleDemoLogin}>
+            Войти как демо-пользователь
+          </Button>
+        </div>
 
         <p className="text-center text-secondary text-atlas-text-secondary mt-6">
           Нет аккаунта?{' '}

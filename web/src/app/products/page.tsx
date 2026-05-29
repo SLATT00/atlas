@@ -2,25 +2,20 @@
 
 import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
-import { Card, CardHeader } from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { formatCurrency } from '@/lib/format';
+import { useDataStore } from '@/store/data';
+import { useToast } from '@/components/ui/Toast';
 import { TrendingUp, Landmark, ChevronRight } from 'lucide-react';
-
-const savingsProducts = [
-  { id: '1', name: 'RUB Вклад', currency: 'RUB', balance: 500000, apy: 18.5, status: 'active' },
-  { id: '2', name: 'USD Вклад', currency: 'USD', balance: 5000, apy: 5.2, status: 'active' },
-  { id: '3', name: 'USDT Стейкинг', currency: 'USDT', balance: 10000, apy: 8.0, status: 'active' },
-];
-
-const loanProducts = [
-  { id: '1', collateral: 'BTC', amount: 2000000, currency: 'RUB', ltv: 45, rate: 12.5, status: 'active' },
-  { id: '2', collateral: 'ETH', amount: 500000, currency: 'RUB', ltv: 52, rate: 13.0, status: 'active' },
-];
 
 export default function ProductsPage() {
   const router = useRouter();
+  const { toast } = useToast();
+  const savings = useDataStore((s) => s.savings);
+  const loans = useDataStore((s) => s.loans);
+  const repayLoan = useDataStore((s) => s.repayLoan);
 
   return (
     <AppShell>
@@ -33,34 +28,39 @@ export default function ProductsPage() {
             <TrendingUp size={20} className="text-atlas-success" />
             <h2 className="text-section text-atlas-text">Накопления</h2>
           </div>
-          <Button size="sm" variant="ghost" onClick={() => router.push('/products')}>Открыть вклад</Button>
         </div>
 
-        <div className="space-y-3">
-          {savingsProducts.map((product) => (
-            <Card key={product.id} hoverable>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-body text-atlas-text font-semibold">{product.name}</p>
-                  <p className="text-label text-atlas-muted mt-0.5">
-                    APY: <span className="text-atlas-success">{product.apy}%</span>
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="text-right">
-                    <p className="text-body text-atlas-text font-semibold">
-                      {formatCurrency(product.balance, product.currency)}
-                    </p>
-                    <p className="text-label text-atlas-success">
-                      +{formatCurrency(product.balance * product.apy / 100 / 365, product.currency)}/день
+        {savings.length === 0 ? (
+          <Card>
+            <p className="text-secondary text-atlas-muted text-center py-6">Нет активных вкладов</p>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {savings.map((product) => (
+              <Card key={product.id} hoverable>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-body text-atlas-text font-semibold">{product.name}</p>
+                    <p className="text-label text-atlas-muted mt-0.5">
+                      APY: <span className="text-atlas-success">{product.apy}%</span>
                     </p>
                   </div>
-                  <ChevronRight size={18} className="text-atlas-muted" />
+                  <div className="flex items-center gap-2">
+                    <div className="text-right">
+                      <p className="text-body text-atlas-text font-semibold">
+                        {formatCurrency(product.balance, product.currency)}
+                      </p>
+                      <p className="text-label text-atlas-success">
+                        +{formatCurrency(product.balance * product.apy / 100 / 365, product.currency)}/день
+                      </p>
+                    </div>
+                    <ChevronRight size={18} className="text-atlas-muted" />
+                  </div>
                 </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Loans Section */}
@@ -70,14 +70,17 @@ export default function ProductsPage() {
             <Landmark size={20} className="text-purple-400" />
             <h2 className="text-section text-atlas-text">Займы</h2>
           </div>
-          <Button size="sm" variant="ghost" onClick={() => router.push('/products')}>Оформить займ</Button>
         </div>
 
-        <div className="space-y-3">
-          {loanProducts.map((loan) => (
-            <Card key={loan.id} hoverable>
-              <div className="flex items-center justify-between">
-                <div>
+        {loans.length === 0 ? (
+          <Card>
+            <p className="text-secondary text-atlas-muted text-center py-6">Нет активных займов</p>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {loans.map((loan) => (
+              <Card key={loan.id}>
+                <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <p className="text-body text-atlas-text font-semibold">
                       Залог: {loan.collateral}
@@ -85,34 +88,34 @@ export default function ProductsPage() {
                     <Badge variant={loan.ltv < 50 ? 'success' : 'warning'}>
                       {`LTV ${loan.ltv}%`}
                     </Badge>
+                    <Badge variant={loan.status === 'active' ? 'info' : 'success'}>
+                      {loan.status === 'active' ? 'Активен' : 'Закрыт'}
+                    </Badge>
                   </div>
-                  <p className="text-label text-atlas-muted mt-0.5">
-                    Ставка: {loan.rate}% годовых
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
                   <p className="text-body text-atlas-text font-semibold">
                     {formatCurrency(loan.amount, loan.currency)}
                   </p>
-                  <ChevronRight size={18} className="text-atlas-muted" />
                 </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-
-        {/* Available Credit */}
-        <Card className="mt-4 border-atlas-accent/20">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-secondary text-atlas-text-secondary">Доступный кредит</p>
-              <p className="text-section text-atlas-text font-bold mt-1">
-                {formatCurrency(5_000_000, 'RUB')}
-              </p>
-            </div>
-            <Button size="sm">Получить</Button>
+                <p className="text-label text-atlas-muted mb-3">
+                  Ставка: {loan.rate}% годовых
+                </p>
+                {loan.status === 'active' && (
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="w-full"
+                    onClick={() => {
+                      repayLoan(loan.id, Math.min(50000, loan.amount));
+                      toast('success', `Погашено ${formatCurrency(Math.min(50000, loan.amount), loan.currency)}`);
+                    }}
+                  >
+                    Погасить ₽50 000
+                  </Button>
+                )}
+              </Card>
+            ))}
           </div>
-        </Card>
+        )}
       </section>
     </AppShell>
   );
