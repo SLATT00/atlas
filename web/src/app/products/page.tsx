@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -19,6 +20,8 @@ const loanProducts = [
 ];
 
 export default function ProductsPage() {
+  const router = useRouter();
+
   return (
     <AppShell>
       <h1 className="text-header text-atlas-text mb-6">Продукты</h1>
@@ -30,7 +33,7 @@ export default function ProductsPage() {
             <TrendingUp size={20} className="text-atlas-success" />
             <h2 className="text-section text-atlas-text">Накопления</h2>
           </div>
-          <Button size="sm" variant="ghost">Открыть вклад</Button>
+          <Button size="sm" variant="ghost" onClick={() => router.push('/products')}>Открыть вклад</Button>
         </div>
 
         <div className="space-y-3">
@@ -67,7 +70,7 @@ export default function ProductsPage() {
             <Landmark size={20} className="text-purple-400" />
             <h2 className="text-section text-atlas-text">Займы</h2>
           </div>
-          <Button size="sm" variant="ghost">Оформить займ</Button>
+          <Button size="sm" variant="ghost" onClick={() => router.push('/products')}>Оформить займ</Button>
         </div>
 
         <div className="space-y-3">

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -14,12 +15,12 @@ import {
 } from 'lucide-react';
 
 const quickActions = [
-  { icon: Plus, label: 'Пополнить', color: 'text-atlas-success' },
-  { icon: ArrowUpRight, label: 'Перевести', color: 'text-atlas-accent' },
-  { icon: RefreshCw, label: 'Обменять', color: 'text-atlas-warning' },
-  { icon: CreditCard, label: 'Карта', color: 'text-atlas-text' },
-  { icon: Landmark, label: 'Займ', color: 'text-purple-400' },
-  { icon: FileText, label: 'Реквизиты', color: 'text-atlas-text-secondary' },
+  { icon: Plus, label: 'Пополнить', color: 'text-atlas-success', href: '/accounts' },
+  { icon: ArrowUpRight, label: 'Перевести', color: 'text-atlas-accent', href: '/transfers/new' },
+  { icon: RefreshCw, label: 'Обменять', color: 'text-atlas-warning', href: '/exchange' },
+  { icon: CreditCard, label: 'Карта', color: 'text-atlas-text', href: '/cards' },
+  { icon: Landmark, label: 'Займ', color: 'text-purple-400', href: '/products' },
+  { icon: FileText, label: 'Реквизиты', color: 'text-atlas-text-secondary', href: '/accounts/1' },
 ];
 
 const mockAssets = [
@@ -78,15 +79,16 @@ export default function HomePage() {
           {quickActions.map((action) => {
             const Icon = action.icon;
             return (
-              <button
+              <Link
                 key={action.label}
+                href={action.href}
                 className="flex flex-col items-center gap-1.5 py-3 rounded-xl hover:bg-white/5 transition-colors"
               >
                 <div className="w-11 h-11 rounded-full bg-atlas-card border border-white/10 flex items-center justify-center">
                   <Icon size={20} className={action.color} />
                 </div>
                 <span className="text-[11px] text-atlas-text-secondary font-medium">{action.label}</span>
-              </button>
+              </Link>
             );
           })}
         </div>

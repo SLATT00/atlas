@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
 import { Card } from '@/components/ui/Card';
 import { Avatar } from '@/components/ui/Avatar';
@@ -65,8 +66,9 @@ export default function ProfilePage() {
         {menuItems.map((item) => {
           const Icon = item.icon;
           return (
-            <button
+            <Link
               key={item.label}
+              href={item.href}
               className="w-full flex items-center justify-between py-3.5 px-3 rounded-xl hover:bg-white/5 transition-colors"
             >
               <div className="flex items-center gap-3">
@@ -79,7 +81,7 @@ export default function ProfilePage() {
                 )}
                 <ChevronRight size={16} className="text-atlas-muted" />
               </div>
-            </button>
+            </Link>
           );
         })}
 

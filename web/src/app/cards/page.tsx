@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -47,7 +48,7 @@ export default function CardsPage() {
 
       <div className="space-y-4">
         {mockCards.map((card) => (
-          <div key={card.id} className="space-y-3">
+          <Link key={card.id} href={`/cards/${card.id}`} className="block space-y-3">
             {/* Card Visual */}
             <div className={`${cardGradients[card.type]} rounded-2xl p-5 border border-white/10 relative overflow-hidden`}>
               <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
@@ -96,7 +97,7 @@ export default function CardsPage() {
                 </button>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </AppShell>

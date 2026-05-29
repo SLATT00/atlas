@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -45,7 +46,8 @@ export default function AccountsPage() {
 
       <div className="space-y-3">
         {mockAccounts.map((account) => (
-          <Card key={account.id} hoverable>
+          <Link key={account.id} href={`/accounts/${account.id}`}>
+            <Card hoverable className="mb-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-atlas-elevated flex items-center justify-center text-lg">
@@ -74,6 +76,7 @@ export default function AccountsPage() {
               </div>
             </div>
           </Card>
+          </Link>
         ))}
       </div>
     </AppShell>

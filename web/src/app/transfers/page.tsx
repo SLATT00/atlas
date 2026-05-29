@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -36,6 +37,7 @@ const mockHistory = [
 
 export default function TransfersPage() {
   const [selectedType, setSelectedType] = useState<TransferType>('internal');
+  const router = useRouter();
 
   return (
     <AppShell>
@@ -74,7 +76,7 @@ export default function TransfersPage() {
             <span className="text-secondary text-atlas-text">0 ₽</span>
           </div>
 
-          <Button className="w-full" size="lg">
+          <Button className="w-full" size="lg" onClick={() => router.push('/transfers/new')}>
             Отправить
           </Button>
         </div>
